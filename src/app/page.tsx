@@ -147,11 +147,13 @@ export default function Home() {
   }, [idea]);
 
   const handleSubmit = async () => {
-    if (!idea.trim()) return;
+    const trimmedIdea = idea.trim();
+    if (!trimmedIdea) return;
+    
     setStatus("loading");
     setLoadingPhase(0);
 
-    // Mock the loading phases
+    // Dynamic loading phase progression
     const phaseInterval = setInterval(() => {
       setLoadingPhase((p) => {
         if (p >= 2) {
@@ -166,23 +168,25 @@ export default function Home() {
       const res = await fetch("/api/validate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ idea }),
+        body: JSON.stringify({ idea: trimmedIdea }),
       });
       const data = await res.json();
       
       if (!res.ok) {
-        throw new Error(data.error || "Failed to validate vibe. Check console.");
+        throw new Error(data.error || "Failed to validate vibe.");
       }
       
-      // Keep it in judging state for a sec
-      await new Promise(r => setTimeout(r, 1000));
+      // Ensure we stay in the "Judging" phase for at least a moment for vibe
+      await new Promise(r => setTimeout(r, 800));
       
       setReport(data);
       setStatus("done");
     } catch (e: any) {
       console.error(e);
-      alert(`Error: ${e.message}`);
+      alert(e.message || "An unexpected error occurred.");
       setStatus("idle");
+    } finally {
+      clearInterval(phaseInterval);
     }
   };
 

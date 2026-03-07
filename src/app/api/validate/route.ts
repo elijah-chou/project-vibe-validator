@@ -18,12 +18,14 @@ export async function POST(req: Request) {
         uniquenessScore: 5,
         pivot: "Currently running in mock mode. Add TAVILY_API_KEY and GEMINI_API_KEY to see real insights! For now, consider targeting hamsters.",
         weekendStack: ["Next.js", "Mock Data", "Tailwind CSS"],
+        sources: [{ title: "Mock Source", url: "https://example.com" }]
       });
     }
 
     // Step 1: Web Search for Competitors and Similar Projects
     const tvly = tavily({ apiKey: process.env.TAVILY_API_KEY });
     let searchContext = "";
+    let sources: { title: string; url: string }[] = [];
     try {
       const searchResponse = await tvly.search(idea, {
         searchDepth: "basic",
@@ -33,6 +35,7 @@ export async function POST(req: Request) {
         maxResults: 5,
       });
       searchContext = searchResponse.results.map(r => `- ${r.title}: ${r.content}`).join("\n");
+      sources = searchResponse.results.map(r => ({ title: r.title, url: r.url }));
     } catch (e) {
       console.error("Tavily Search Error:", e);
       searchContext = "Failed to fetch web results. Proceed with general knowledge.";
@@ -72,7 +75,10 @@ export async function POST(req: Request) {
     
     try {
       const jsonResponse = JSON.parse(responseText);
-      return NextResponse.json(jsonResponse);
+      return NextResponse.json({
+        ...jsonResponse,
+        sources
+      });
     } catch (parseError) {
       console.error("Failed to parse Gemini JSON:", responseText);
       return NextResponse.json({ error: "Failed to parse AI response" }, { status: 500 });

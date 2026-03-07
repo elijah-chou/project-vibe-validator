@@ -8,6 +8,7 @@ type VibeReport = {
   uniquenessScore: number;
   pivot: string;
   weekendStack: string[];
+  sources?: { title: string; url: string }[];
 };
 
 const LoadingState = ({ phase }: { phase: number }) => {
@@ -101,6 +102,24 @@ const ReportCard = ({ report, onReset }: { report: VibeReport; onReset: () => vo
             ))}
           </div>
         </div>
+
+        {report.sources && report.sources.length > 0 && (
+          <div className="mt-8 pt-8 border-t border-gray-800">
+            <h3 className="text-gray-400 font-mono text-sm uppercase tracking-wider mb-4 flex items-center gap-2">
+              <Terminal className="w-4 h-4" /> Analyzed Sources
+            </h3>
+            <ul className="flex flex-col gap-2">
+              {report.sources.map((source, i) => (
+                <li key={i} className="text-sm">
+                  <a href={source.url} target="_blank" rel="noopener noreferrer" className="text-cyber-accent-cyan hover:underline hover:text-white transition-colors flex items-center gap-2 break-all">
+                    <ArrowRight className="w-3 h-3 flex-shrink-0 mt-0.5" /> 
+                    <span>{source.title}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
       
       <button

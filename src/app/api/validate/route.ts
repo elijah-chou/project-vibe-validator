@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { tavily } from "@tavily/core";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { firestore } from "@/lib/firebase-admin";
 
 export async function POST(req: Request) {
   try {
@@ -78,10 +79,22 @@ export async function POST(req: Request) {
     
     try {
       const jsonResponse = JSON.parse(responseText);
-      return NextResponse.json({
+      const finalData = {
+        idea,
         ...jsonResponse,
-        sources
-      });
+        sources,
+        createdAt: new Date().toISOString()
+      };
+
+      // Step 3: Save to Firestore
+      try {
+        await firestore.collection("validations").add(finalData);
+      } catch (dbError) {
+        console.error("Firestore Error:", dbError);
+        // We still return the data even if DB saving fails
+      }
+
+      return NextResponse.json(finalData);
     } catch (parseError) {
       console.error("Failed to parse Gemini JSON:", responseText);
       return NextResponse.json({ error: "Failed to parse AI response" }, { status: 500 });

@@ -41,10 +41,10 @@ export async function POST(req: Request) {
       searchContext = "Failed to fetch web results. Proceed with general knowledge.";
     }
 
-    // Step 2: Gemini 2.0 Flash Analysis
+    // Step 2: Gemini 2.5 Flash Analysis
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
     const model = genAI.getGenerativeModel({ 
-      model: "gemini-2.0-flash", 
+      model: "gemini-2.5-flash", 
       generationConfig: { responseMimeType: "application/json" } 
     });
 

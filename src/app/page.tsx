@@ -181,9 +181,10 @@ export default function Home() {
       
       setReport(data);
       setStatus("done");
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error(e);
-      alert(e.message || "An unexpected error occurred.");
+      const errorMessage = e instanceof Error ? e.message : "An unexpected error occurred.";
+      alert(errorMessage);
       setStatus("idle");
     } finally {
       clearInterval(phaseInterval);

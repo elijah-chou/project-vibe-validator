@@ -1,4 +1,9 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Project Vibe Validator
+
+[![CI & Code Coverage](https://github.com/elijah-chou/project-vibe-validator/actions/workflows/ci.yml/badge.svg)](https://github.com/elijah-chou/project-vibe-validator/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/elijah-chou/project-vibe-validator/graph/badge.svg)](https://codecov.io/gh/elijah-chou/project-vibe-validator)
+
+Sanity check your messy shower thoughts with AI.
 
 ## Getting Started
 
@@ -16,19 +21,40 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Testing & Code Coverage
 
-## Learn More
+This project uses [Vitest](https://vitest.dev/) and [@vitest/coverage-v8](https://vitest.dev/guide/coverage.html) for fast unit testing and code coverage reporting.
 
-To learn more about Next.js, take a look at the following resources:
+### Run Tests
+```bash
+npm run test
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Run Tests in Watch Mode
+```bash
+npm run test:watch
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Generate Code Coverage
+```bash
+npm run test:coverage
+```
 
-## Deploy on Vercel
+Coverage reports are saved in the `coverage/` directory, including:
+- **Terminal Summary**: Real-time console table.
+- **LCOV (`coverage/lcov.info`)**: Formatted for Codecov and CI tooling.
+- **HTML Report (`coverage/index.html`)**: Interactive browser view of file coverage.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## CI & Codecov Integration
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+A GitHub Actions workflow is configured in [`.github/workflows/ci.yml`](.github/workflows/ci.yml) that triggers on pushes and pull requests to `main`. It:
+1. Installs dependencies using `npm ci`.
+2. Runs the linter (`npm run lint`).
+3. Runs the test suite with coverage (`npm run test:coverage`).
+4. Uploads coverage reports to [Codecov](https://about.codecov.io/) via `codecov/codecov-action@v5`.
+
+### Configuring Codecov Token
+1. Sign in to [Codecov](https://app.codecov.io/) with your GitHub account.
+2. Navigate to the `project-vibe-validator` repository and copy the **Upload Token**.
+3. In your GitHub repository, go to **Settings > Secrets and variables > Actions**.
+4. Create a new repository secret named `CODECOV_TOKEN` and paste your token.

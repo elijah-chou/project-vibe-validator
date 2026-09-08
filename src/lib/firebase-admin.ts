@@ -1,6 +1,6 @@
 import admin from "firebase-admin";
 
-if (!admin.apps.length) {
+if (!admin.apps.length && process.env.FIREBASE_PROJECT_ID) {
   try {
     admin.initializeApp({
       credential: admin.credential.cert({
@@ -14,6 +14,14 @@ if (!admin.apps.length) {
   }
 }
 
-const firestore = admin.firestore();
+const firestore = (admin.apps.length
+  ? admin.firestore()
+  : {
+      collection: () => ({
+        add: async () => {
+          throw new Error("Firebase admin is not initialized");
+        },
+      }),
+    }) as unknown as admin.firestore.Firestore;
 
 export { firestore };
